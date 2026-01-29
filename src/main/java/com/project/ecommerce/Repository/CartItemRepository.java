@@ -1,5 +1,6 @@
 package com.project.ecommerce.Repository;
 
+import com.project.ecommerce.Entity.Cart;
 import com.project.ecommerce.Entity.CartItem;
 import com.project.ecommerce.Entity.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,5 +9,5 @@ import java.util.Optional;
 
 @Repository
 public interface CartItemRepository extends JpaRepository<CartItem,Integer> {
-    Optional<CartItem> findCartItemByCartAndProduct(CartItem cartItem, Product product);
+    Optional<CartItem> findByCartAndProduct(Cart cart, Product product);
 }

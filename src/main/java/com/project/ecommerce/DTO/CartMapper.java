@@ -1,0 +1,29 @@
+package com.project.ecommerce.DTO;
+
+import com.project.ecommerce.Entity.Cart;
+import com.project.ecommerce.Entity.CartItem;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class CartMapper {
+    public static CartDTO toDto(Cart cart) {
+
+        CartDTO dto = new CartDTO();
+        dto.setCartId(cart.getId());
+
+        List<CartItemDTO> itemDtos = new ArrayList<>();
+        double total = 0;
+        for (CartItem item : cart.getCartItems()) {
+
+            CartItemDTO itemDto = new CartItemDTO();
+            itemDto.setProductId(item.getProduct().getId());
+            itemDto.setProduct(item.getProduct());
+            itemDto.setQuantity(item.getQuantity());
+            itemDtos.add(itemDto);
+        }
+        dto.setItems(itemDtos);
+        return dto;
+    }
+}
+
