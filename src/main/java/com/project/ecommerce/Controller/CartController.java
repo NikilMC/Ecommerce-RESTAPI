@@ -7,6 +7,7 @@ import com.project.ecommerce.Entity.CartItem;
 import com.project.ecommerce.Service.CartService;
 import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,8 +34,23 @@ public class CartController {
     }
 
     @PostMapping("/add/{productId}")
-    public void addProduct(@PathVariable int productId, Authentication authentication){
+    public ResponseEntity<Void> addProduct(@PathVariable int productId, Authentication authentication){
         String email = authentication.name();
         cartService.addProductToCart(email,productId);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @DeleteMapping("/remove/{productId}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable int productId, Authentication authentication){
+        String email = authentication.name();
+        cartService.removeProductFromCart(email, productId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/update/{productId}")
+    public ResponseEntity<Void> updateQuantity(@PathVariable int productId, @RequestParam int qty, Authentication authentication){
+        String email = authentication.name();
+        cartService.updateQuantity(email, productId, qty);
+        return ResponseEntity.ok().build();
     }
 }
