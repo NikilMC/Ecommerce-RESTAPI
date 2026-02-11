@@ -28,8 +28,7 @@ public class CartController {
     @GetMapping("")
     public ResponseEntity<CartDTO> getMyCart(Authentication authentication){
         String email = authentication.name();
-        Cart cart = cartService.getCartForUser(email);
-        CartDTO cartDTO = CartMapper.toDto(cart);
+        CartDTO cartDTO = cartService.getCartForUser(email);
         return ResponseEntity.ok(cartDTO);
     }
 

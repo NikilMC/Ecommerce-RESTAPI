@@ -1,5 +1,7 @@
 package com.project.ecommerce.Service;
 
+import com.project.ecommerce.DTO.CartDTO;
+import com.project.ecommerce.DTO.CartMapper;
 import com.project.ecommerce.Entity.Cart;
 import com.project.ecommerce.Entity.CartItem;
 import com.project.ecommerce.Entity.Product;
@@ -16,6 +18,7 @@ import java.util.Optional;
 @Service
 public class CartService {
 
+    private final CartMapper cartMapper;
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
     private final UserRepository userRepository;
@@ -23,6 +26,7 @@ public class CartService {
 
     @Autowired
     public CartService(
+            CartMapper cartMapper,
             CartRepository cartRepository,
             CartItemRepository cartItemRepository,
             UserRepository userRepository,
@@ -32,18 +36,15 @@ public class CartService {
         this.cartItemRepository = cartItemRepository;
         this.userRepository = userRepository;
         this.productRepository = productRepository;
+        this.cartMapper = cartMapper;
     }
 
-    public Cart getCartForUser(String email) {
+    public CartDTO getCartForUser(String email) {
 
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        return cartRepository.findByUser(user)
-                .orElseGet(() -> {
-                    Cart cart = new Cart();
-                    cart.setUser(user);
-                    return cartRepository.save(cart);
-                });
+        Optional<User> user = userRepository.findByEmail(email);
+        Optional<Cart> cart = cartRepository.findByUser(user);
+
+        return cartMapper.toDto(cart);
     }
 
     public void addProductToCart(String email, int productId) {
@@ -52,14 +53,14 @@ public class CartService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
-        Cart cart = cartRepository.findByUser(user)
+        Cart cart = cartRepository.findByUser(Optional.ofNullable(user))
                 .orElseGet(() -> {
                     Cart newCart = new Cart();
                     newCart.setUser(user);
                     return cartRepository.save(newCart);
                 });
         Optional<CartItem> existingItem =
-                cartItemRepository.findByCartAndProduct(cart, product);
+                cartItemRepository.findByCartAndProduct(Optional.of(cart), product);
         if (existingItem.isPresent()) {
             CartItem item = existingItem.get();
             item.setQuantity(item.getQuantity() + 1);
@@ -77,8 +78,8 @@ public class CartService {
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        Cart cart = cartRepository.findByUser(user)
-                .orElseThrow(() -> new RuntimeException("Cart not found"));
+        Optional<Cart> cart = Optional.ofNullable(cartRepository.findByUser(Optional.ofNullable(user))
+                .orElseThrow(() -> new RuntimeException("Cart not found")));
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
         CartItem item = cartItemRepository.findByCartAndProduct(cart, product)
@@ -94,11 +95,11 @@ public class CartService {
         }
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        Cart cart = cartRepository.findByUser(user)
+        Cart cart = cartRepository.findByUser(Optional.ofNullable(user))
                 .orElseThrow(() -> new RuntimeException("Cart not found"));
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
-        CartItem item = cartItemRepository.findByCartAndProduct(cart, product)
+        CartItem item = cartItemRepository.findByCartAndProduct(Optional.ofNullable(cart), product)
                 .orElseThrow(() -> new RuntimeException("Item not in cart"));
 
         item.setQuantity(quantity);
