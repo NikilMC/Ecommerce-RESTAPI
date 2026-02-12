@@ -1,47 +1,63 @@
 package com.project.ecommerce.Controller;
 
 
+import com.project.ecommerce.DTO.AddToCartRequest;
 import com.project.ecommerce.DTO.CartDTO;
 import com.project.ecommerce.DTO.CartMapper;
+import com.project.ecommerce.DTO.OrderDTO;
 import com.project.ecommerce.Entity.Cart;
+import com.project.ecommerce.Entity.Order;
 import com.project.ecommerce.Service.CartService;
+import com.project.ecommerce.Service.OrderService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/orders")
 public class OrderController {
-    private CartService cartService;
 
-    @GetMapping
-    public ResponseEntity<CartDTO> getCart(Authentication auth){
-        return ResponseEntity.ok(
-                cartService.getCartForUser(auth.getName())
-        );
+    private final OrderService orderService;
+
+    private OrderDTO orderDTO = new OrderDTO();
+
+    public OrderController(OrderService orderService) {
+        this.orderService = orderService;
     }
 
-    @PostMapping("/products")
-    public ResponseEntity<CartDTO> addProduct(Authentication auth, @RequestBody AddToCartRequest request){
+    @PostMapping("/checkout")
+    public ResponseEntity<OrderDTO> checkout(Authentication auth) {
 
-        return ResponseEntity.ok(
-                cartService.addProductToCart(auth.getName(), request.getProductId(), request.getQuantity()
-                )
-        );
+        Order order = orderService.placeOrder(auth.getName());
+        return ResponseEntity.ok(orderDTO.convertToDTO(order));
     }
 
-    @PutMapping("/products/{productId}")
-    public ResponseEntity<CartDTO> updateQuantity(Authentication auth, @PathVariable int productId, @RequestParam int quantity){
+    @GetMapping("")
+    public ResponseEntity<List<OrderDTO>> getMyOrders(Authentication auth) {
 
-        return ResponseEntity.ok(
-                cartService.updateQuantity(auth.getName(), productId, quantity)
-        );
+        List<Order> orders = orderService.getOrdersForUser(auth.getName());
+
+        List<OrderDTO> orderDTOs = new ArrayList<>();
+
+        for (Order order : orders) {
+            orderDTOs.add(orderDTO.convertToDTO(order));
+        }
+        return ResponseEntity.ok(orderDTOs);
     }
 
-    @DeleteMapping("/products/{productId}")
-    public ResponseEntity<CartDTO> removeProduct(Authentication auth, @PathVariable int productId){
-        return ResponseEntity.ok(
-                cartService.removeProductFromCart(auth.getName(), productId)
-        );
+
+    @GetMapping("/{orderId}")
+    public ResponseEntity<OrderDTO> getOrder(
+            Authentication auth,
+            @PathVariable int orderId){
+
+        Order order = orderService.getOrderForUserById(auth.getName(), orderId);
+
+        return ResponseEntity.ok(orderDTO.convertToDTO(order));
     }
 }

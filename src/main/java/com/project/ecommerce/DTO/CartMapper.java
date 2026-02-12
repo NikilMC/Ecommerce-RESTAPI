@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class CartMapper {
-    public static CartDTO toDto(Optional<Cart> cart) {
+    public static CartDTO toDto(Cart cart) {
 
         CartDTO dto = new CartDTO();
         dto.setCartId(cart.getId());

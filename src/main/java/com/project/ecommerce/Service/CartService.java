@@ -41,13 +41,17 @@ public class CartService {
 
     public CartDTO getCartForUser(String email) {
 
-        Optional<User> user = userRepository.findByEmail(email);
-        Optional<Cart> cart = cartRepository.findByUser(user);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Cart cart = cartRepository.findByUser(Optional.ofNullable(user))
+                .orElseThrow(() -> new RuntimeException("Cart not found"));
 
         return cartMapper.toDto(cart);
     }
 
-    public void addProductToCart(String email, int productId) {
+
+    public CartDTO addProductToCart(String email, int productId) {
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -72,6 +76,7 @@ public class CartService {
             item.setQuantity(1);
             cartItemRepository.save(item);
         }
+        return cartMapper.toDto(cart);
     }
 
     public void removeProductFromCart(String email, int productId) {
