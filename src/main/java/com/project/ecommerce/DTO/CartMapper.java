@@ -2,11 +2,13 @@ package com.project.ecommerce.DTO;
 
 import com.project.ecommerce.Entity.Cart;
 import com.project.ecommerce.Entity.CartItem;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Component
 public class CartMapper {
     public static CartDTO toDto(Cart cart) {
 

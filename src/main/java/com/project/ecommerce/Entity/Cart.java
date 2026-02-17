@@ -1,9 +1,6 @@
 package com.project.ecommerce.Entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.util.List;
 
@@ -14,8 +11,11 @@ public class Cart {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private int id;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
     List<CartItem> cartItems;
 
     public Cart() {
