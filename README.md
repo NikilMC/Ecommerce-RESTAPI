@@ -16,7 +16,7 @@ This is a backend REST API for an e-commerce application built using Spring Boot
 - Spring Security + JWT
 - Hibernate / JPA
 - Maven
-- MySQL (or your DB)
+- MySQL
 
 ## Project Structure
 - controller/ - Handles API requests
