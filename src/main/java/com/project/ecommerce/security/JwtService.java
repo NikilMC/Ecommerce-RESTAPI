@@ -5,16 +5,21 @@ import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import io.jsonwebtoken.Claims;
 
 @Component
 public class JwtService {
-    private final String key="abcdefghijklmnopqrstuvwxyz123456";
+    @Value("${app.jwt.secret}")
+    private String key;
 
-    private final long expiration=60*60*1000;
+    @Value("${app.jwt.expiration-ms:3600000}")
+    private long expiration;
 
     public String generateToken(User user){
 
@@ -26,7 +31,7 @@ public class JwtService {
                 .claim("role",user.getRole())
                 .setIssuedAt(now)
                 .setExpiration(expiry)
-                .signWith(Keys.hmacShaKeyFor(key.getBytes()), SignatureAlgorithm.HS256)
+                .signWith(Keys.hmacShaKeyFor(key.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS256)
                 .compact();
     }
 
@@ -41,7 +46,7 @@ public class JwtService {
 
     private Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
-                .setSigningKey(Keys.hmacShaKeyFor(key.getBytes()))
+                .setSigningKey(Keys.hmacShaKeyFor(key.getBytes(StandardCharsets.UTF_8)))
                 .build()
                 .parseClaimsJws(token)
                 .getBody();

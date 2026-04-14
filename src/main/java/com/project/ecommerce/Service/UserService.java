@@ -3,6 +3,7 @@ package com.project.ecommerce.Service;
 import com.project.ecommerce.Entity.User;
 import com.project.ecommerce.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -11,13 +12,21 @@ import java.util.Optional;
 public class UserService {
 
     private UserRepository userRepository;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository){
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder){
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public void registerUser(User user){
+        if (user.getRole() == null || user.getRole().isBlank()) {
+            user.setRole("USER");
+        }
+        String normalizedRole = user.getRole().replace("ROLE_", "").toUpperCase();
+        user.setRole(normalizedRole);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
     }
 
@@ -38,7 +47,7 @@ public class UserService {
         User user = null;
         if(result.isPresent()){
             user=result.get();
-            if(password.equals(user.getPassword())){
+            if(passwordEncoder.matches(password, user.getPassword())){
                 return user;
             }
             else{

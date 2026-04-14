@@ -10,8 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static org.springframework.web.servlet.function.ServerResponse.status;
-
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -21,9 +19,9 @@ public class AuthController {
     private JwtService jwtService;
 
     @Autowired
-    public AuthController(UserService userService, JwtService JWT){
+    public AuthController(UserService userService, JwtService jwtService){
         this.userService = userService;
-        this.jwtService=JWT;
+        this.jwtService = jwtService;
     }
 
     @PostMapping("/register")

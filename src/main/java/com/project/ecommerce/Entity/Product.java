@@ -1,7 +1,6 @@
 package com.project.ecommerce.Entity;
 
 import jakarta.persistence.*;
-import org.springframework.stereotype.Component;
 
 @Entity
 @Table(name="product")

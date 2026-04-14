@@ -1,16 +1,13 @@
 package com.project.ecommerce.Service;
 
-import com.project.ecommerce.DTO.OrderDTO;
 import com.project.ecommerce.Entity.*;
 import com.project.ecommerce.Repository.*;
 import com.project.ecommerce.Repository.UserRepository;
 import jakarta.transaction.Transactional;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class OrderService {
@@ -34,7 +31,7 @@ public class OrderService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        Cart cart = cartRepository.findByUser(Optional.ofNullable(user))
+        Cart cart = cartRepository.findByUser(user)
                 .orElseThrow(() -> new RuntimeException("Cart not found"));
 
         if (cart.getCartItems() == null || cart.getCartItems().isEmpty()) {

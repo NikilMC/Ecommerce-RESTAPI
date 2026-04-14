@@ -3,7 +3,6 @@ package com.project.ecommerce.Controller;
 import com.project.ecommerce.Entity.Product;
 import com.project.ecommerce.Service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

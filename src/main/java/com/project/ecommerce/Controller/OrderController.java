@@ -1,22 +1,14 @@
 package com.project.ecommerce.Controller;
 
-
-import com.project.ecommerce.DTO.AddToCartRequest;
-import com.project.ecommerce.DTO.CartDTO;
-import com.project.ecommerce.DTO.CartMapper;
 import com.project.ecommerce.DTO.OrderDTO;
-import com.project.ecommerce.Entity.Cart;
 import com.project.ecommerce.Entity.Order;
-import com.project.ecommerce.Service.CartService;
 import com.project.ecommerce.Service.OrderService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/orders")
